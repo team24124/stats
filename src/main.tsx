@@ -13,7 +13,6 @@ const queryClient = new QueryClient()
 const router = createRouter({
     history: createHashHistory(),
     routeTree,
-    basepath: '/stats/',
     defaultPreload: 'intent',
     context: {
         queryClient,
