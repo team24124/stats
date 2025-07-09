@@ -34,5 +34,6 @@ function Compare() {
     <p>Use the team searchbar in each chart module to find teams to compare. Customize the visualization using the settings shown below the searchbar.</p>
     <EPALineChart passedOptions={selectedTeamOptions} className='mt-8 m-4' />
     <TeamBarChart passedOptions={selectedTeamOptions} className='mt-8 m-4' />
+    <a href='https://frc-events.firstinspires.org/services/API'><i><p className='text-muted-foreground'>Event Data provided by FIRST</p></i></a>
   </main>
 }

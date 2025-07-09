@@ -27,9 +27,9 @@ export default function Page() {
 
   const TeamResponse = useSuspenseQuery(getAllTeamData);
   const EventResponse = useSuspenseQuery(getEventData);
-  
-  if(EventResponse.isError) return <p>An error has occured. Please try again</p>
-  if(TeamResponse.isError) return <p>An error has occured. Please try again</p>
+
+  if (EventResponse.isError) return <p>An error has occured. Please try again</p>
+  if (TeamResponse.isError) return <p>An error has occured. Please try again</p>
 
   const TeamData: Team[] = TeamResponse.data
   const EventData: Event[] = EventResponse.data
@@ -44,11 +44,12 @@ export default function Page() {
     <main >
       <h1>View Teams</h1>
       <p>Use the searchbar below to view individual team statistics.</p>
+      <a href='https://frc-events.firstinspires.org/services/API'><i><p className='text-muted-foreground'>Event Data provided by FIRST</p></i></a>
       <div className='max-w-4xl lg:max-w-7xl'>
         <div className='flex flex-col items-center'>
           <CardSection numTeams={TeamData.length} numEvents={EventData.length} />
         </div>
-        
+
         <div className='pt-16 flex flex-col items-center'>
           <TeamSearchbar onSelected={handleSearch} items={TeamData} />
         </div>

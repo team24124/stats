@@ -27,6 +27,7 @@ function Index() {
         The defensive Margin (M) parameter is disregarded in our calculations to give a more accurate measure of a team's offensive capability as opposed to likelihood of winning.
         Calculations only take into account qualification matches from league meets/tournaments, super/regional qualifiers, championships, and premier events in order to more fairly compare teams. 
       </p>
+      <a href='https://frc-events.firstinspires.org/services/API'><i><p className='text-muted-foreground'>Event Data provided by FIRST</p></i></a>
     </main>
   )
 }
