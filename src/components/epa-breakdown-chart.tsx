@@ -5,9 +5,9 @@ import type { Team } from "@/types/Team";
 
 function EPABreakdownChart({ team }: { team: Team }) {
     const chartData = [
-        { type: "auto_epa", value: team.auto_epa_total, fill: 'var(--color-auto_epa)' },
-        { type: "tele_epa", value: team.tele_epa_total, fill: 'var(--color-tele_epa)' },
-        { type: "endgame_epa", value: team.epa_total - team.auto_epa_total - team.tele_epa_total, fill: 'var(--color-endgame_epa)' },
+        { type: "auto_epa", value: Math.max(team.auto_epa_total, 0), fill: 'var(--color-auto_epa)' },
+        { type: "tele_epa", value: Math.max(team.tele_epa_total, 0), fill: 'var(--color-tele_epa)' },
+        { type: "endgame_epa", value: Math.max(team.epa_total - team.auto_epa_total - team.tele_epa_total, 0), fill: 'var(--color-endgame_epa)' },
     ]
     const chartConfig = {
         value: {
