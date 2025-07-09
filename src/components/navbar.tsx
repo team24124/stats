@@ -22,7 +22,7 @@ const NavbarLink = ({ to, children }: LinkProp) => {
 
 function Navbar() {
     return (
-        <div className="grid grid-cols-3 p-4 bg-popover text-popover-foreground">
+        <div className="grid grid-cols-3 p-4 bg-popover text-popover-foreground min-w-md">
             <a href="https://team24124.github.io" className="size-8 my-auto m-4"><img src="nthsbird.png" /></a>
             <div className="flex justify-center align-middle">
                 <NavigationMenu >
