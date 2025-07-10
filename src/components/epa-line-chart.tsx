@@ -91,7 +91,7 @@ function EPALineChart({ passedOptions = [], className = "" }: { passedOptions?: 
                         accessibilityLayer
                         data={chartData}
                         margin={{
-                            left: -40,
+                            left: -16,
                             bottom: 16
                         }}
                         
