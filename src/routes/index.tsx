@@ -13,8 +13,8 @@ function Index() {
 
   return (
     <main>
-      <h1>Nigthawks Robotics Statistics</h1>
-      <p>Welcome to the Nighthawks Robotics statistics dashboard. Providing up-to-date OPR and EPA statistics calulcations and visualization for FIRST Tech Challenge teams. Data is updated approximately one day after an event concludes.</p>
+      <h1>Nighthawks Robotics Statistics</h1>
+      <p>Welcome to the Nighthawks Robotics Statistics dashboard. Providing up-to-date OPR and EPA statistics calulcations and visualization for FIRST Tech Challenge teams. Data is updated approximately one day after an event concludes.</p>
       <p>View individual team statistics or compare teams using the buttons below.</p>
       <LinkSection />
 
@@ -27,7 +27,7 @@ function Index() {
         The defensive Margin (M) parameter is disregarded in our calculations to give a more accurate measure of a team's offensive capability as opposed to likelihood of winning.
         Calculations only take into account qualification matches from league meets/tournaments, super/regional qualifiers, championships, and premier events in order to more fairly compare teams. 
       </p>
-      <a href='https://frc-events.firstinspires.org/services/API'><i><p className='text-muted-foreground'>Event Data provided by FIRST</p></i></a>
+      <a href='https://frc-events.firstinspires.org/services/API'><i><p className='text-muted-foreground'>Event Data provided by FIRST is updated daily at 00 UTC.</p></i></a>
     </main>
   )
 }
