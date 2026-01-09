@@ -44,7 +44,7 @@ export default function Page() {
     <main >
       <h1>View Teams</h1>
       <p>Use the searchbar below to view individual team statistics.</p>
-      <a href='https://frc-events.firstinspires.org/services/API'><i><p className='text-muted-foreground'>Event Data provided by FIRST</p></i></a>
+      <a href='https://frc-events.firstinspires.org/services/API'><i><p className='text-muted-foreground'>Event Data provided by FIRST is updated daily at 00 UTC.</p></i></a>
       <div className='max-w-4xl lg:max-w-7xl'>
         <div className='flex flex-col items-center'>
           <CardSection numTeams={TeamData.length} numEvents={EventData.length} />
