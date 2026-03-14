@@ -9,6 +9,10 @@ import TeamMultiselector, { type Option } from "./team-multiselect";
 import { Card, CardContent, CardDescription, CardTitle } from "./ui/card";
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from "./ui/chart";
 
+// List of preset colors to be used first, in order
+let COLOR_LIST = ["red", "blue", "green", "purple", "yellow", "orange", "magenta", "maroon", "olive", "brown"];
+let colorIndex = 0;
+
 function EPALineChart({ passedOptions = [], className = "" }: { passedOptions?: Option[], className?: string }) {
     // Load Data
     const AllTeamsResponse = useSuspenseQuery(getAllTeamData);
@@ -27,11 +31,17 @@ function EPALineChart({ passedOptions = [], className = "" }: { passedOptions?: 
         { value: 'historical_tele_epa', label: 'EPA (TeleOp)' },
     ]
 
-    // Assign random but persistent color to each value
+    // Assigning colors from an array, randomizing once exceeding the array's capacity
     const colorMap = useMemo(() => {
         selected.forEach((key) => {
             if (!colorMapRef.current[key.value]) {
-                colorMapRef.current[key.value] = getRandomColor();
+                // If all colors have been used up, it generates a random color.
+                if(colorIndex >= COLOR_LIST.length) {
+                    colorMapRef.current[key.value] = getRandomColor();
+                } else {
+                    colorMapRef.current[key.value] = COLOR_LIST[colorIndex];
+                    colorIndex++;
+                }
             }
         });
         return colorMapRef.current;
