@@ -3,8 +3,14 @@ import Loading from '@/components/loading'
 import { Button } from '@/components/ui/button'
 import { IconLink } from '@tabler/icons-react'
 import { createFileRoute } from '@tanstack/react-router'
+import { getAllTeamData } from '@/queries/getTeamData';
 
 export const Route = createFileRoute('/')({
+    loader: async ({ context: { queryClient } }) => {
+        return Promise.all([
+          queryClient.ensureQueryData(getAllTeamData),
+        ])
+      },
   pendingComponent: () => <Loading />,
   component: Index,
 })

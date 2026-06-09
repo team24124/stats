@@ -20,7 +20,7 @@ function EPALineChart({ passedOptions = [], className = "" }: { passedOptions?: 
     const DefaultTeam2Response = useSuspenseQuery(getTeamData('26145'));
 
     // Create selected teams state, and propagate with two default teams
-    const DefaultOptions: Option[] = passedOptions.length <= 0 ? [{ value: "24124", team: DefaultTeamResponse.data }, { value: "26145", team: DefaultTeam2Response.data }] : passedOptions
+    const DefaultOptions: Option[] = passedOptions.length <= 0 ? [{ value: DefaultTeamResponse.data.team_number.toString(), team: DefaultTeamResponse.data }, { value: DefaultTeam2Response.data.team_number.toString(), team: DefaultTeam2Response.data }] : passedOptions
     const [selected, setSelected] = useState<Option[]>(DefaultOptions);
     const colorMapRef = useRef<{ [key: string]: string }>({});
 

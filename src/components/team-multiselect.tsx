@@ -375,7 +375,7 @@ const TeamMultiselector = React.forwardRef<MultipleSelectorRef, MultipleSelector
         shouldFilter={
           commandProps?.shouldFilter !== undefined ? commandProps.shouldFilter : !onSearch
         } // When onSearch is provided, we don't want to filter the options. You can still override it.
-        filter={commandFilter()}
+        filter={() => 1}
       >
         <div
           className={cn(
@@ -500,8 +500,32 @@ const TeamMultiselector = React.forwardRef<MultipleSelectorRef, MultipleSelector
                   {Object.entries(selectables).map(([key, dropdowns]) => (
                     <CommandGroup key={key} heading={key} className="h-full overflow-auto">
                       <>
-                        {dropdowns
-                          .filter((option) => option.team.team_number.toString().includes(debouncedSearchTerm)) // Filter for relevant searches
+                        {[...dropdowns]
+                          .filter((option) => option.team.team_name.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) || option.team.team_number.toString().includes(debouncedSearchTerm)) // Filter for relevant searches. Searches for name and number
+                          .sort((a, b) => {
+                            var numA = a.team.team_number;
+                            var numB = b.team.team_number;
+
+                            //Checks if there are any letters in the search, and sorts based on name instead of number
+                            if(debouncedSearchTerm.toUpperCase() != debouncedSearchTerm.toLowerCase()){
+                                numA = a.team.team_name.toLowerCase();
+                                numB = b.team.team_name.toLowerCase();
+                            }
+
+                            // Filters first for teams that start with the searched term
+                            const startsWithA = numA.toString().startsWith(debouncedSearchTerm.toLowerCase());
+                            const startsWithB = numB.toString().startsWith(debouncedSearchTerm.toLowerCase());
+
+                            if(startsWithA && !startsWithB) return -1;
+                            if(!startsWithA && startsWithB) return 1;
+
+                            if(debouncedSearchTerm.toUpperCase() != debouncedSearchTerm.toLowerCase()){
+                                const array = [numA,numB].sort();
+                            if(array[0] == numA) return -1;
+                                return 1;
+                            }
+                            return numA - numB;
+                          })
                           .slice(0, 8)
                           .map((option) => {
                             return (

@@ -1,10 +1,11 @@
 import type { Team } from "@/types/Team";
 import { Command as CommandPrimitive } from "cmdk";
 import { useState } from "react";
-import { Command, CommandEmpty, CommandGroup, CommandItem, CommandList } from "./ui/command";
-import { Input } from "./ui/input";
-import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
-import { Skeleton } from "./ui/skeleton";
+import { Command, CommandEmpty, CommandGroup, CommandItem, CommandList } from "@/components/ui/command";
+import { Input } from "@/components/ui/input";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Search } from "lucide-react"
 
 type Props = {
     onSelected: (inputValue: string) => void;
@@ -14,7 +15,7 @@ type Props = {
     placeholder?: string;
 };
 
-function TeamSearchbar({
+function NavSearchbar({
     onSelected,
     items,
     isLoading,
@@ -37,11 +38,11 @@ function TeamSearchbar({
     };
 
     return (
-        <div className="h-16 mx-4 w-md md:w-2xl lg:w-4xl">
+        <div className="h-12 mx-4 w-[200px] mt-[15px]">
             <Popover open={open} onOpenChange={setOpen}>
                 <Command shouldFilter={false}>
                     <PopoverTrigger>
-                        <Input value={searchValue} onChange={(e) => onSearchValueChange(e.target.value)} placeholder={placeholder} className="h-16"/>
+                        <Input value={searchValue} onChange={(e) => onSearchValueChange(e.target.value)} placeholder={placeholder} className="h-12"/>
                     </PopoverTrigger>
                     {!open && <CommandList aria-hidden="true" className="hidden" />}
                     <PopoverContent
@@ -55,13 +56,13 @@ function TeamSearchbar({
                                 e.preventDefault();
                             }
                         }}
-                        className="w-md md:w-2xl lg:min-w-4xl p-0" //w-[--radix-popover-trigger-width]
+                        className=" p-0" //w-[--radix-popover-trigger-width]
                     >
                         <CommandList>
                             {isLoading && (
                                 <CommandPrimitive.Loading>
                                     <div className="p-1">
-                                        <Skeleton className="h-16 w-full" />
+                                        <Skeleton className="h-12" />
                                     </div>
                                 </CommandPrimitive.Loading>
                             )}
@@ -73,7 +74,7 @@ function TeamSearchbar({
                                             var numA = a.team_number;
                                             var numB = b.team_number;
 
-                                            //Checks if there are any letters in the search, and sorts based on name instead of number
+                                            // Checks if there are any letters in the search, and sorts based on name instead of number
                                             if(searchValue.toUpperCase() != searchValue.toLowerCase()){
                                                  numA = a.team_name.toLowerCase();
                                                  numB = b.team_name.toLowerCase();
@@ -118,4 +119,4 @@ function TeamSearchbar({
     );
 }
 
-export default TeamSearchbar;
+export default NavSearchbar;
