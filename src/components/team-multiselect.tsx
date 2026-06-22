@@ -352,17 +352,6 @@ const TeamMultiselector = React.forwardRef<MultipleSelectorRef, MultipleSelector
       [options, selected],
     );
 
-    /** Avoid Creatable Selector freezing or lagging when paste a long string. */
-    const commandFilter = React.useCallback(() => {
-      if (commandProps?.filter) {
-        return commandProps.filter;
-      }
-
-
-      // Using default filter in `cmdk`. We don't have to provide it.
-      return undefined;
-    }, [commandProps?.filter]);
-
     return (
       <Command
         ref={dropdownRef}
@@ -506,22 +495,32 @@ const TeamMultiselector = React.forwardRef<MultipleSelectorRef, MultipleSelector
                             var numA = a.team.team_number;
                             var numB = b.team.team_number;
 
-                            //Checks if there are any letters in the search, and sorts based on name instead of number
-                            if(debouncedSearchTerm.toUpperCase() != debouncedSearchTerm.toLowerCase()){
-                                numA = a.team.team_name.toLowerCase();
-                                numB = b.team.team_name.toLowerCase();
-                            }
+                            var nameA = a.team.team_name.toLowerCase();
+                            var nameB = b.team.team_name.toLowerCase();
 
-                            // Filters first for teams that start with the searched term
-                            const startsWithA = numA.toString().startsWith(debouncedSearchTerm.toLowerCase());
-                            const startsWithB = numB.toString().startsWith(debouncedSearchTerm.toLowerCase());
+                            var nameSearch = false;
+                            const searchValue = debouncedSearchTerm;
+
+                            // Checks if there are any letters in the search, and sorts based on name instead of number
+                            if(searchValue.toUpperCase() != searchValue.toLowerCase()) nameSearch = true;
+
+                            // Filters first for teams that start with the number searched, and then numerically
+                            let startsWithA;
+                            let startsWithB;
+                            if(nameSearch) {
+                                startsWithA = nameA.startsWith(searchValue.toLowerCase());
+                                startsWithB = nameB.startsWith(searchValue.toLowerCase());
+                            } else {
+                                startsWithA = numA.toString().startsWith(searchValue);
+                                startsWithB = numB.toString().startsWith(searchValue);
+                            }
 
                             if(startsWithA && !startsWithB) return -1;
                             if(!startsWithA && startsWithB) return 1;
 
-                            if(debouncedSearchTerm.toUpperCase() != debouncedSearchTerm.toLowerCase()){
+                            if(nameSearch){
                                 const array = [numA,numB].sort();
-                            if(array[0] == numA) return -1;
+                                if(array[0] == numA) return -1;
                                 return 1;
                             }
                             return numA - numB;

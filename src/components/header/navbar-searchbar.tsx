@@ -5,7 +5,6 @@ import { Command, CommandEmpty, CommandGroup, CommandItem, CommandList } from "@
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Search } from "lucide-react"
 
 type Props = {
     onSelected: (inputValue: string) => void;
@@ -74,20 +73,29 @@ function NavSearchbar({
                                             var numA = a.team_number;
                                             var numB = b.team_number;
 
+                                            var nameA = a.team_name.toLowerCase();
+                                            var nameB = b.team_name.toLowerCase();
+
+                                            var nameSearch = false;
+
                                             // Checks if there are any letters in the search, and sorts based on name instead of number
-                                            if(searchValue.toUpperCase() != searchValue.toLowerCase()){
-                                                 numA = a.team_name.toLowerCase();
-                                                 numB = b.team_name.toLowerCase();
-                                            }
+                                            if(searchValue.toUpperCase() != searchValue.toLowerCase()) nameSearch = true;
 
                                             // Filters first for teams that start with the number searched, and then numerically
-                                            const startsWithA = numA.toString().startsWith(searchValue.toLowerCase());
-                                            const startsWithB = numB.toString().startsWith(searchValue.toLowerCase());
+                                            let startsWithA;
+                                            let startsWithB;
+                                            if(nameSearch) {
+                                                startsWithA = nameA.startsWith(searchValue.toLowerCase());
+                                                startsWithB = nameB.startsWith(searchValue.toLowerCase());
+                                            } else {
+                                                startsWithA = numA.toString().startsWith(searchValue);
+                                                startsWithB = numB.toString().startsWith(searchValue);
+                                            }
 
                                             if(startsWithA && !startsWithB) return -1;
                                             if(!startsWithA && startsWithB) return 1;
 
-                                            if(searchValue.toUpperCase() != searchValue.toLowerCase()){
+                                            if(nameSearch){
                                                 const array = [numA,numB].sort();
                                                 if(array[0] == numA) return -1;
                                                 return 1;
