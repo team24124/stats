@@ -9,14 +9,56 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as RankingRouteImport } from './routes/ranking'
+import { Route as PredictRouteImport } from './routes/predict'
+import { Route as MethodRouteImport } from './routes/method'
+import { Route as ExplainRouteImport } from './routes/explain'
 import { Route as CompareRouteImport } from './routes/compare'
+import { Route as AboutRouteImport } from './routes/about'
+import { Route as OPRCompareRouteImport } from './routes/OPR-Compare'
+import { Route as EPACompareRouteImport } from './routes/EPA-Compare'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as TeamsIndexRouteImport } from './routes/teams/index'
 import { Route as TeamsTeamNumberRouteImport } from './routes/teams/$teamNumber'
 
+const RankingRoute = RankingRouteImport.update({
+  id: '/ranking',
+  path: '/ranking',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PredictRoute = PredictRouteImport.update({
+  id: '/predict',
+  path: '/predict',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MethodRoute = MethodRouteImport.update({
+  id: '/method',
+  path: '/method',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExplainRoute = ExplainRouteImport.update({
+  id: '/explain',
+  path: '/explain',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CompareRoute = CompareRouteImport.update({
   id: '/compare',
   path: '/compare',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AboutRoute = AboutRouteImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OPRCompareRoute = OPRCompareRouteImport.update({
+  id: '/OPR-Compare',
+  path: '/OPR-Compare',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EPACompareRoute = EPACompareRouteImport.update({
+  id: '/EPA-Compare',
+  path: '/EPA-Compare',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -37,45 +79,156 @@ const TeamsTeamNumberRoute = TeamsTeamNumberRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/EPA-Compare': typeof EPACompareRoute
+  '/OPR-Compare': typeof OPRCompareRoute
+  '/about': typeof AboutRoute
   '/compare': typeof CompareRoute
+  '/explain': typeof ExplainRoute
+  '/method': typeof MethodRoute
+  '/predict': typeof PredictRoute
+  '/ranking': typeof RankingRoute
   '/teams/$teamNumber': typeof TeamsTeamNumberRoute
   '/teams': typeof TeamsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/EPA-Compare': typeof EPACompareRoute
+  '/OPR-Compare': typeof OPRCompareRoute
+  '/about': typeof AboutRoute
   '/compare': typeof CompareRoute
+  '/explain': typeof ExplainRoute
+  '/method': typeof MethodRoute
+  '/predict': typeof PredictRoute
+  '/ranking': typeof RankingRoute
   '/teams/$teamNumber': typeof TeamsTeamNumberRoute
   '/teams': typeof TeamsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/EPA-Compare': typeof EPACompareRoute
+  '/OPR-Compare': typeof OPRCompareRoute
+  '/about': typeof AboutRoute
   '/compare': typeof CompareRoute
+  '/explain': typeof ExplainRoute
+  '/method': typeof MethodRoute
+  '/predict': typeof PredictRoute
+  '/ranking': typeof RankingRoute
   '/teams/$teamNumber': typeof TeamsTeamNumberRoute
   '/teams/': typeof TeamsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/compare' | '/teams/$teamNumber' | '/teams'
+  fullPaths:
+    | '/'
+    | '/EPA-Compare'
+    | '/OPR-Compare'
+    | '/about'
+    | '/compare'
+    | '/explain'
+    | '/method'
+    | '/predict'
+    | '/ranking'
+    | '/teams/$teamNumber'
+    | '/teams'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/compare' | '/teams/$teamNumber' | '/teams'
-  id: '__root__' | '/' | '/compare' | '/teams/$teamNumber' | '/teams/'
+  to:
+    | '/'
+    | '/EPA-Compare'
+    | '/OPR-Compare'
+    | '/about'
+    | '/compare'
+    | '/explain'
+    | '/method'
+    | '/predict'
+    | '/ranking'
+    | '/teams/$teamNumber'
+    | '/teams'
+  id:
+    | '__root__'
+    | '/'
+    | '/EPA-Compare'
+    | '/OPR-Compare'
+    | '/about'
+    | '/compare'
+    | '/explain'
+    | '/method'
+    | '/predict'
+    | '/ranking'
+    | '/teams/$teamNumber'
+    | '/teams/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  EPACompareRoute: typeof EPACompareRoute
+  OPRCompareRoute: typeof OPRCompareRoute
+  AboutRoute: typeof AboutRoute
   CompareRoute: typeof CompareRoute
+  ExplainRoute: typeof ExplainRoute
+  MethodRoute: typeof MethodRoute
+  PredictRoute: typeof PredictRoute
+  RankingRoute: typeof RankingRoute
   TeamsTeamNumberRoute: typeof TeamsTeamNumberRoute
   TeamsIndexRoute: typeof TeamsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/ranking': {
+      id: '/ranking'
+      path: '/ranking'
+      fullPath: '/ranking'
+      preLoaderRoute: typeof RankingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/predict': {
+      id: '/predict'
+      path: '/predict'
+      fullPath: '/predict'
+      preLoaderRoute: typeof PredictRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/method': {
+      id: '/method'
+      path: '/method'
+      fullPath: '/method'
+      preLoaderRoute: typeof MethodRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/explain': {
+      id: '/explain'
+      path: '/explain'
+      fullPath: '/explain'
+      preLoaderRoute: typeof ExplainRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/compare': {
       id: '/compare'
       path: '/compare'
       fullPath: '/compare'
       preLoaderRoute: typeof CompareRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/about': {
+      id: '/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/OPR-Compare': {
+      id: '/OPR-Compare'
+      path: '/OPR-Compare'
+      fullPath: '/OPR-Compare'
+      preLoaderRoute: typeof OPRCompareRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/EPA-Compare': {
+      id: '/EPA-Compare'
+      path: '/EPA-Compare'
+      fullPath: '/EPA-Compare'
+      preLoaderRoute: typeof EPACompareRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -104,7 +257,14 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  EPACompareRoute: EPACompareRoute,
+  OPRCompareRoute: OPRCompareRoute,
+  AboutRoute: AboutRoute,
   CompareRoute: CompareRoute,
+  ExplainRoute: ExplainRoute,
+  MethodRoute: MethodRoute,
+  PredictRoute: PredictRoute,
+  RankingRoute: RankingRoute,
   TeamsTeamNumberRoute: TeamsTeamNumberRoute,
   TeamsIndexRoute: TeamsIndexRoute,
 }

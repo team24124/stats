@@ -146,7 +146,7 @@ function TeamBarChart({ passedOptions = [], className = "" }: { passedOptions?: 
                         />
                         <ChartLegend content={(props) => <ChartLegendContent payload={props.payload} />} />
 
-                        {Object.keys(statToggles).map((stat) => statToggles[stat as keyof typeof statToggles] && <Bar dataKey={stat} fill={`var(--color-${stat})`} radius={4} />)}
+                        {Object.keys(statToggles).map((stat) => statToggles[stat as keyof typeof statToggles] && <Bar key={stat} dataKey={stat} fill={`var(--color-${stat})`} radius={4} />)}
                     </BarChart >
                 </ChartContainer>
 

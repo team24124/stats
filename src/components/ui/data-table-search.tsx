@@ -12,7 +12,7 @@ function DataTableSearch<TData>({ table }: DataTableSearchProps<TData>) {
         <div className="flex items-center py-4">
             <Input
                 placeholder="Search by team number..."
-                value={(table.getColumn("team_number")?.getFilterValue() as number) ?? null}
+                value={(table.getColumn("team_number")?.getFilterValue() as number) ?? ""}
                 onChange={(event) => {
                     table.getColumn("team_number")?.setFilterValue(event.target.value)
 
