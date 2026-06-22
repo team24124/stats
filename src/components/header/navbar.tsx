@@ -1,15 +1,9 @@
-import { NavigationMenuItem } from "@radix-ui/react-navigation-menu";
-import { Link, useNavigate } from "@tanstack/react-router";
+import { useNavigate } from "@tanstack/react-router";
 import NavbarDropdown from "./navbar-dropdown";
 import NavSearchbar from "./navbar-searchbar";
 import { useSuspenseQuery } from '@tanstack/react-query'
 import { getAllTeamData } from '@/queries/getTeamData'
 import type { Team } from "@/types/Team";
-
-type LinkProp = {
-    to: string
-    children: React.ReactNode
-}
 
 function Navbar() {
     const navigate = useNavigate({ from: '/teams' })
