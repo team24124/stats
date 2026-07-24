@@ -4,16 +4,10 @@ import { useSuspenseQuery } from '@tanstack/react-query'
 import { getAllTeamData } from '@/queries/getTeamData'
 import type { Team } from '@/types/Team'
 import { useState, useMemo } from 'react'
-import { X, Sliders, Info, ShieldAlert, Sparkles } from 'lucide-react'
+import { X, ShieldAlert } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import TeamSearchbar from '@/components/team-search'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip'
 
 export const Route = createFileRoute('/predict')({
   pendingComponent: () => <Loading />,
