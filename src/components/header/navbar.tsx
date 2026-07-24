@@ -17,11 +17,16 @@ function Navbar() {
     }
 
     return (
-        <div className="grid grid-cols-12 p-4 bg-popover text-popover-foreground min-w-md fixed">
-            <NavbarDropdown />
-            <a href="https://team24124.github.io" className="size-12 my-auto m-4"><img src="nthsbird.png" /></a>
-            <p></p><p></p><p></p><p></p><p></p><p></p><p></p><p></p>
-            <NavSearchbar onSelected={handleSearch} items={TeamData} />
+        <div className="flex items-center justify-between p-4 bg-popover text-popover-foreground w-full fixed top-0 left-0 z-50 h-[80px] shadow-sm border-b">
+            <div className="flex items-center">
+                <NavbarDropdown />
+                <a href="https://team24124.github.io" className="size-12 flex items-center justify-center ml-2">
+                    <img src="nthsbird.png" alt="logo" className="h-10 w-auto" />
+                </a>
+            </div>
+            <div className="mr-4">
+                <NavSearchbar onSelected={handleSearch} items={TeamData} />
+            </div>
         </div>
     );
 }
