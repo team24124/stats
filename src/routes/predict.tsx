@@ -302,9 +302,9 @@ function Predict() {
           {/* Prediction win rate Card */}
           <Card className="border-border/50 bg-card/65 backdrop-blur-xs">
             <CardHeader className="pb-4">
-              <CardTitle className="text-center text-base">Prediction Analysis</CardTitle>
+              <CardTitle className="text-center text-base">Prediction results</CardTitle>
               <CardDescription className="text-center text-xs">
-                Real-time simulated win rate based on EPA weights
+                Win rate prediction based on weighted EPA
               </CardDescription>
             </CardHeader>
             <CardContent className="flex flex-col gap-6">
@@ -337,9 +337,9 @@ function Predict() {
                 </div>
               </div>
 
-              {/* Alliance Phase Comparison */}
+              {/* Breakdown */}
               <div className="flex flex-col gap-4">
-                <h3 className="text-xs font-bold text-muted-foreground border-b pb-1">Alliance Phase Comparison</h3>
+                <h3 className="text-xs font-bold text-muted-foreground border-b pb-1">Detailed breakdown</h3>
 
                 {/* Auto EPA */}
                 <div className="flex flex-col gap-1">
