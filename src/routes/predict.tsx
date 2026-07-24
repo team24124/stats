@@ -277,7 +277,7 @@ function Predict() {
               <h4 className="text-xs font-bold text-red-500/80">Red Alliance Estimated EPA</h4>
               <div className="grid grid-cols-2 gap-2 text-xs">
                 <div className="flex justify-between border-b border-red-500/5 pb-1">
-                  <span className="text-muted-foreground">Autonomous (Auto):</span>
+                  <span className="text-muted-foreground">Autonomous:</span>
                   <span className="font-bold text-foreground font-mono">{redStats.auto.toFixed(1)}</span>
                 </div>
                 <div className="flex justify-between border-b border-red-500/5 pb-1">
@@ -448,7 +448,7 @@ function Predict() {
               <h4 className="text-xs font-bold text-blue-500/80">Blue Alliance Estimated EPA</h4>
               <div className="grid grid-cols-2 gap-2 text-xs">
                 <div className="flex justify-between border-b border-blue-500/5 pb-1">
-                  <span className="text-muted-foreground">Autonomous (Auto):</span>
+                  <span className="text-muted-foreground">Autonomous:</span>
                   <span className="font-bold text-foreground font-mono">{blueStats.auto.toFixed(1)}</span>
                 </div>
                 <div className="flex justify-between border-b border-blue-500/5 pb-1">
