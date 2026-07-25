@@ -32,9 +32,10 @@ function Predict() {
   const [blue1, setBlue1] = useState<Team | null>(null)
   const [blue2, setBlue2] = useState<Team | null>(null)
 
-  // State: Event Standings, Matches Schedule & Score Details
+  // State: Event Standings, Matches Schedule (Full), Played Results & Score Details
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null)
-  const [matches, setMatches] = useState<any[]>([])
+  const [matches, setMatches] = useState<any[]>([]) // Full schedule
+  const [results, setResults] = useState<any[]>([]) // Played matches with scores
   const [scores, setScores] = useState<any[]>([])
   const [isLoadingMatches, setIsLoadingMatches] = useState<boolean>(false)
 
@@ -44,16 +45,23 @@ function Predict() {
   const teleWeight = 1.0
   const endWeight = 0.8
 
-  // Fetch match schedule and score details for simulation when selected event changes
+  // Fetch complete schedule, played match results, and score details for simulation
   useEffect(() => {
     if (!selectedEvent) {
       setMatches([])
+      setResults([])
       setScores([])
       return
     }
 
     setIsLoadingMatches(true)
     Promise.all([
+      fetch(`https://nighthawks-stats.vercel.app/api/events/${selectedEvent.event_code}/schedule/`)
+        .then((res) => res.json())
+        .catch((err) => {
+          console.error("Failed to fetch event schedule:", err)
+          return { schedule: [] }
+        }),
       fetch(`https://nighthawks-stats.vercel.app/api/events/${selectedEvent.event_code}/matches/`)
         .then((res) => res.json())
         .catch((err) => {
@@ -67,8 +75,9 @@ function Predict() {
           return { matchScores: [] }
         })
     ])
-      .then(([matchesData, scoresData]) => {
-        setMatches(matchesData.matches || [])
+      .then(([scheduleData, matchesData, scoresData]) => {
+        setMatches(scheduleData.schedule || [])
+        setResults(matchesData.matches || [])
         setScores(scoresData.matchScores || [])
       })
       .finally(() => {
@@ -271,7 +280,9 @@ function Predict() {
 
         if (redNums.length === 0 || blueNums.length === 0) return
 
-        const isPlayed = m.postResultTime !== null && m.postResultTime !== undefined && m.postResultTime !== '';
+        // Look for corresponding played match results in results array
+        const playedMatch = results.find((r: any) => r.matchNumber === m.matchNumber)
+        const isPlayed = playedMatch && playedMatch.postResultTime !== null && playedMatch.postResultTime !== undefined && playedMatch.postResultTime !== '';
 
         let winner: 'Red' | 'Blue' | 'Tie' = 'Tie'
         let r_rp = 0, b_rp = 0
@@ -279,8 +290,8 @@ function Predict() {
         let blueScoreAdded = 0
 
         if (isPlayed) {
-          const redScore = m.scoreRedFinal ?? 0
-          const blueScore = m.scoreBlueFinal ?? 0
+          const redScore = playedMatch.scoreRedFinal ?? 0
+          const blueScore = playedMatch.scoreBlueFinal ?? 0
           redScoreAdded = redScore
           blueScoreAdded = blueScore
 
@@ -435,7 +446,7 @@ function Predict() {
         }
       })
       .sort((a, b) => (b.epa_total || 0) - (a.epa_total || 0))
-  }, [selectedEvent, teams, matches, scores, defaultEPA, autoWeight, teleWeight, endWeight, cConstant])
+  }, [selectedEvent, teams, matches, results, scores, defaultEPA, autoWeight, teleWeight, endWeight, cConstant])
 
   return (
     <main className="px-4 py-8 max-w-5xl mx-auto flex flex-col gap-6 w-full">
