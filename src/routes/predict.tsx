@@ -32,9 +32,10 @@ function Predict() {
   const [blue1, setBlue1] = useState<Team | null>(null)
   const [blue2, setBlue2] = useState<Team | null>(null)
 
-  // State: Event Standings & Matches Schedule
+  // State: Event Standings, Matches Schedule & Score Details
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null)
   const [matches, setMatches] = useState<any[]>([])
+  const [scores, setScores] = useState<any[]>([])
   const [isLoadingMatches, setIsLoadingMatches] = useState<boolean>(false)
 
   // Prediction model parameters (corresponding to Nest backend)
@@ -43,22 +44,32 @@ function Predict() {
   const teleWeight = 1.0
   const endWeight = 0.8
 
-  // Fetch match schedule for simulation when selected event changes
+  // Fetch match schedule and score details for simulation when selected event changes
   useEffect(() => {
     if (!selectedEvent) {
       setMatches([])
+      setScores([])
       return
     }
 
     setIsLoadingMatches(true)
-    fetch(`https://nighthawks-stats.vercel.app/api/events/${selectedEvent.event_code}/matches/`)
-      .then((res) => res.json())
-      .then((data) => {
-        setMatches(data.matches || [])
-      })
-      .catch((err) => {
-        console.error("Failed to fetch event matches schedule:", err)
-        setMatches([])
+    Promise.all([
+      fetch(`https://nighthawks-stats.vercel.app/api/events/${selectedEvent.event_code}/matches/`)
+        .then((res) => res.json())
+        .catch((err) => {
+          console.error("Failed to fetch event matches:", err)
+          return { matches: [] }
+        }),
+      fetch(`https://nighthawks-stats.vercel.app/api/events/${selectedEvent.event_code}/scores/`)
+        .then((res) => res.json())
+        .catch((err) => {
+          console.error("Failed to fetch event scores:", err)
+          return { matchScores: [] }
+        })
+    ])
+      .then(([matchesData, scoresData]) => {
+        setMatches(matchesData.matches || [])
+        setScores(scoresData.matchScores || [])
       })
       .finally(() => {
         setIsLoadingMatches(false)
@@ -228,6 +239,31 @@ function Predict() {
         }
       }
 
+      // Calculate average bonus RP rates from completed matches to use as expected values for remaining matches
+      let totalCompletedWithScores = 0
+      let totalRedMovement = 0, totalRedGoal = 0, totalRedPattern = 0
+      let totalBlueMovement = 0, totalBlueGoal = 0, totalBluePattern = 0
+
+      scores.forEach((s) => {
+        const red = s.alliances?.find((a: any) => a.alliance === 'Red')
+        const blue = s.alliances?.find((a: any) => a.alliance === 'Blue')
+        if (red && blue) {
+          totalCompletedWithScores += 1
+          if (red.movementRP) totalRedMovement += 1
+          if (red.goalRP) totalRedGoal += 1
+          if (red.patternRP) totalRedPattern += 1
+
+          if (blue.movementRP) totalBlueMovement += 1
+          if (blue.goalRP) totalBlueGoal += 1
+          if (blue.patternRP) totalBluePattern += 1
+        }
+      })
+
+      const totalBonusRP = totalRedMovement + totalRedGoal + totalRedPattern + totalBlueMovement + totalBlueGoal + totalBluePattern
+      const avgBonusRP = totalCompletedWithScores > 0 
+        ? totalBonusRP / (2 * totalCompletedWithScores)
+        : 0.9 // Default fallback: ~0.9 RP per alliance per match (e.g. 50% movement, 15% goal, 25% pattern)
+
       // Simulate matches (using actual results if played, otherwise predicting outcomes)
       matches.forEach((m) => {
         const redNums = m.teams?.filter((t: any) => t.station.startsWith('Red')).map((t: any) => t.teamNumber) || []
@@ -238,7 +274,7 @@ function Predict() {
         const isPlayed = m.postResultTime !== null && m.postResultTime !== undefined && m.postResultTime !== '';
 
         let winner: 'Red' | 'Blue' | 'Tie' = 'Tie'
-        let r_rp = 1, b_rp = 1
+        let r_rp = 0, b_rp = 0
         let redScoreAdded = 0
         let blueScoreAdded = 0
 
@@ -248,18 +284,36 @@ function Predict() {
           redScoreAdded = redScore
           blueScoreAdded = blueScore
 
+          // 3-1-0 Win/Loss/Tie RP rules for DECODE season
           if (redScore > blueScore) {
             winner = 'Red'
-            r_rp = 2
+            r_rp = 3
             b_rp = 0
           } else if (blueScore > redScore) {
             winner = 'Blue'
             r_rp = 0
-            b_rp = 2
+            b_rp = 3
           } else {
             winner = 'Tie'
             r_rp = 1
             b_rp = 1
+          }
+
+          // Add actual bonus RPs if scores detail is available
+          const matchScore = scores.find((s: any) => s.matchNumber === m.matchNumber)
+          if (matchScore) {
+            const redObj = matchScore.alliances?.find((a: any) => a.alliance === 'Red')
+            const blueObj = matchScore.alliances?.find((a: any) => a.alliance === 'Blue')
+            if (redObj) {
+              r_rp += (redObj.movementRP ? 1 : 0) + (redObj.goalRP ? 1 : 0) + (redObj.patternRP ? 1 : 0)
+            }
+            if (blueObj) {
+              b_rp += (blueObj.movementRP ? 1 : 0) + (blueObj.goalRP ? 1 : 0) + (blueObj.patternRP ? 1 : 0)
+            }
+          } else {
+            // Fallback to average bonus RP
+            r_rp += avgBonusRP
+            b_rp += avgBonusRP
           }
         } else {
           // Calculate Alliance EPAs for unplayed matches
@@ -288,16 +342,24 @@ function Predict() {
           const scoreDiff = blueEff - redEff
           const redProb = 1 / (1 + Math.pow(10, scoreDiff / cConstant))
 
-          // Allocate RP based on 0.505/0.495 win rate threshold
+          // Allocate predicted win/loss/tie RP based on 3-1-0 win rate thresholds
           if (redProb > 0.505) {
             winner = 'Red'
-            r_rp = 2
+            r_rp = 3
             b_rp = 0
           } else if (redProb < 0.495) {
             winner = 'Blue'
             r_rp = 0
-            b_rp = 2
+            b_rp = 3
+          } else {
+            winner = 'Tie'
+            r_rp = 1
+            b_rp = 1
           }
+
+          // Add expected bonus RPs based on averages
+          r_rp += avgBonusRP
+          b_rp += avgBonusRP
 
           redScoreAdded = redTotal
           blueScoreAdded = blueTotal
@@ -332,7 +394,7 @@ function Predict() {
 
       // Sort standings: Sort by RP (descending), then Score (descending)
       return Object.values(standingsMap).sort((a, b) => {
-        if (b.rp !== a.rp) {
+        if (Math.abs(b.rp - a.rp) > 0.01) {
           return b.rp - a.rp
         }
         return b.score - a.score
@@ -373,7 +435,7 @@ function Predict() {
         }
       })
       .sort((a, b) => (b.epa_total || 0) - (a.epa_total || 0))
-  }, [selectedEvent, teams, matches, defaultEPA, autoWeight, teleWeight, endWeight, cConstant])
+  }, [selectedEvent, teams, matches, scores, defaultEPA, autoWeight, teleWeight, endWeight, cConstant])
 
   return (
     <main className="px-4 py-8 max-w-5xl mx-auto flex flex-col gap-6 w-full">
