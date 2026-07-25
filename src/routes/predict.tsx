@@ -151,6 +151,30 @@ function Predict() {
 
     // Calculate score difference relative to Red Alliance
     const scoreDiff = blueEff - redEff
+
+    const hasRedTeam = !!(red1 || red2)
+    const hasBlueTeam = !!(blue1 || blue2)
+
+    if (hasRedTeam && !hasBlueTeam) {
+      return {
+        redEff,
+        blueEff,
+        redProb: 1.0,
+        blueProb: 0.0,
+        scoreDiff,
+      }
+    }
+
+    if (!hasRedTeam && hasBlueTeam) {
+      return {
+        redEff,
+        blueEff,
+        redProb: 0.0,
+        blueProb: 1.0,
+        scoreDiff,
+      }
+    }
+
     // Formula: P(Red Win) = 1 / (1 + 10^(scoreDiff / C))
     const redProb = 1 / (1 + Math.pow(10, scoreDiff / cConstant))
     const blueProb = 1 - redProb
@@ -162,7 +186,7 @@ function Predict() {
       blueProb,
       scoreDiff,
     }
-  }, [redStats, blueStats, cConstant, autoWeight, teleWeight, endWeight])
+  }, [red1, red2, blue1, blue2, redStats, blueStats, cConstant, autoWeight, teleWeight, endWeight])
 
   // Check if any slot has a team
   const hasAnyTeam = !!(red1 || red2 || blue1 || blue2)
