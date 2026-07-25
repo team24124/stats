@@ -228,51 +228,79 @@ function Predict() {
         }
       }
 
-      // Simulate matches
+      // Simulate matches (using actual results if played, otherwise predicting outcomes)
       matches.forEach((m) => {
         const redNums = m.teams?.filter((t: any) => t.station.startsWith('Red')).map((t: any) => t.teamNumber) || []
         const blueNums = m.teams?.filter((t: any) => t.station.startsWith('Blue')).map((t: any) => t.teamNumber) || []
 
         if (redNums.length === 0 || blueNums.length === 0) return
 
-        // Calculate Alliance EPAs
-        let redAuto = 0, redTele = 0, redEnd = 0, redTotal = 0
-        redNums.forEach((num: number) => {
-          const stats = getTeamStats(num)
-          redAuto += stats.auto
-          redTele += stats.tele
-          redEnd += stats.endgame
-          redTotal += stats.total
-        })
+        const isPlayed = m.postResultTime !== null && m.postResultTime !== undefined && m.postResultTime !== '';
 
-        let blueAuto = 0, blueTele = 0, blueEnd = 0, blueTotal = 0
-        blueNums.forEach((num: number) => {
-          const stats = getTeamStats(num)
-          blueAuto += stats.auto
-          blueTele += stats.tele
-          blueEnd += stats.endgame
-          blueTotal += stats.total
-        })
-
-        // Predict outcomes (using auto×1.2, tele×1.0, end×0.8 weights consistent with main calculation)
-        const redEff = autoWeight * redAuto + teleWeight * redTele + endWeight * redEnd
-        const blueEff = autoWeight * blueAuto + teleWeight * blueTele + endWeight * blueEnd
-
-        const scoreDiff = blueEff - redEff
-        const redProb = 1 / (1 + Math.pow(10, scoreDiff / cConstant))
-
-        // Allocate RP based on 0.505/0.495 win rate threshold
         let winner: 'Red' | 'Blue' | 'Tie' = 'Tie'
         let r_rp = 1, b_rp = 1
+        let redScoreAdded = 0
+        let blueScoreAdded = 0
 
-        if (redProb > 0.505) {
-          winner = 'Red'
-          r_rp = 2
-          b_rp = 0
-        } else if (redProb < 0.495) {
-          winner = 'Blue'
-          r_rp = 0
-          b_rp = 2
+        if (isPlayed) {
+          const redScore = m.scoreRedFinal ?? 0
+          const blueScore = m.scoreBlueFinal ?? 0
+          redScoreAdded = redScore
+          blueScoreAdded = blueScore
+
+          if (redScore > blueScore) {
+            winner = 'Red'
+            r_rp = 2
+            b_rp = 0
+          } else if (blueScore > redScore) {
+            winner = 'Blue'
+            r_rp = 0
+            b_rp = 2
+          } else {
+            winner = 'Tie'
+            r_rp = 1
+            b_rp = 1
+          }
+        } else {
+          // Calculate Alliance EPAs for unplayed matches
+          let redAuto = 0, redTele = 0, redEnd = 0, redTotal = 0
+          redNums.forEach((num: number) => {
+            const stats = getTeamStats(num)
+            redAuto += stats.auto
+            redTele += stats.tele
+            redEnd += stats.endgame
+            redTotal += stats.total
+          })
+
+          let blueAuto = 0, blueTele = 0, blueEnd = 0, blueTotal = 0
+          blueNums.forEach((num: number) => {
+            const stats = getTeamStats(num)
+            blueAuto += stats.auto
+            blueTele += stats.tele
+            blueEnd += stats.endgame
+            blueTotal += stats.total
+          })
+
+          // Predict outcomes (using auto×1.2, tele×1.0, end×0.8 weights consistent with main calculation)
+          const redEff = autoWeight * redAuto + teleWeight * redTele + endWeight * redEnd
+          const blueEff = autoWeight * blueAuto + teleWeight * blueTele + endWeight * blueEnd
+
+          const scoreDiff = blueEff - redEff
+          const redProb = 1 / (1 + Math.pow(10, scoreDiff / cConstant))
+
+          // Allocate RP based on 0.505/0.495 win rate threshold
+          if (redProb > 0.505) {
+            winner = 'Red'
+            r_rp = 2
+            b_rp = 0
+          } else if (redProb < 0.495) {
+            winner = 'Blue'
+            r_rp = 0
+            b_rp = 2
+          }
+
+          redScoreAdded = redTotal
+          blueScoreAdded = blueTotal
         }
 
         // Update Red Teams statistics
@@ -281,7 +309,7 @@ function Predict() {
           if (t) {
             t.games_played += 1
             t.rp += r_rp
-            t.score += redTotal
+            t.score += redScoreAdded
             if (winner === 'Red') t.wins += 1
             else if (winner === 'Blue') t.losses += 1
             else t.ties += 1
@@ -294,7 +322,7 @@ function Predict() {
           if (t) {
             t.games_played += 1
             t.rp += b_rp
-            t.score += blueTotal
+            t.score += blueScoreAdded
             if (winner === 'Blue') t.wins += 1
             else if (winner === 'Red') t.losses += 1
             else t.ties += 1
@@ -683,7 +711,7 @@ function Predict() {
                   </CardTitle>
                   <CardDescription className="text-xs">
                     {matches && matches.length > 0 
-                      ? "Teams ranked by simulated Ranking Points (RP) and total score. Features simulated metrics as well as OPR/EPA stats."
+                      ? "Teams ranked by projected final standings (combining actual results of played matches and simulated outcomes of remaining matches)."
                       : "Teams ranked by total Expected Points Added (EPA). Features overall OPR and EPA metrics."}
                   </CardDescription>
                 </CardHeader>
