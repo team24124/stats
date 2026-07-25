@@ -838,7 +838,7 @@ function Predict() {
                             {matches && matches.length > 0 && (
                               <>
                                 <TableCell className="font-bold font-mono text-purple-500">
-                                  {team.rp}
+                                  {Math.round(team.rp)}
                                 </TableCell>
                                 <TableCell className="font-mono text-purple-400 text-xs">
                                   {`${team.wins}-${team.losses}-${team.ties}`}
