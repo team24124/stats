@@ -6,7 +6,7 @@ import { getEventData } from '@/queries/getEventData'
 import type { Team } from '@/types/Team'
 import type { Event } from '@/types/Event'
 import { useState, useMemo, useEffect } from 'react'
-import { ShieldAlert, Search, Info} from 'lucide-react'
+import { Search, Info} from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
@@ -164,8 +164,7 @@ function Predict() {
     }
   }, [redStats, blueStats, cConstant, autoWeight, teleWeight, endWeight])
 
-  // Check if all slots are filled and if any slot has a team
-  const allFilled = !!(red1 && red2 && blue1 && blue2)
+  // Check if any slot has a team
   const hasAnyTeam = !!(red1 || red2 || blue1 || blue2)
 
   // Calculate Predicted Event Standings (Beta) - Simulation based if matches schedule is loaded, otherwise EPA sorted
