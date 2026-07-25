@@ -105,14 +105,14 @@ function Predict() {
 
   // Calculate Red Alliance statistics
   const redStats = useMemo(() => {
-    const t1Auto = red1 ? red1.auto_epa_total : defaultEPA.auto
-    const t1Tele = red1 ? red1.tele_epa_total : defaultEPA.tele
-    const t1Total = red1 ? red1.epa_total : defaultEPA.total
+    const t1Auto = red1 ? red1.auto_epa_total || 0 : 0
+    const t1Tele = red1 ? red1.tele_epa_total || 0 : 0
+    const t1Total = red1 ? red1.epa_total || 0 : 0
     const t1End = t1Total - t1Auto - t1Tele
 
-    const t2Auto = red2 ? red2.auto_epa_total : defaultEPA.auto
-    const t2Tele = red2 ? red2.tele_epa_total : defaultEPA.tele
-    const t2Total = red2 ? red2.epa_total : defaultEPA.total
+    const t2Auto = red2 ? red2.auto_epa_total || 0 : 0
+    const t2Tele = red2 ? red2.tele_epa_total || 0 : 0
+    const t2Total = red2 ? red2.epa_total || 0 : 0
     const t2End = t2Total - t2Auto - t2Tele
 
     return {
@@ -121,18 +121,18 @@ function Predict() {
       endgame: t1End + t2End,
       total: t1Total + t2Total,
     }
-  }, [red1, red2, defaultEPA])
+  }, [red1, red2])
 
   // Calculate Blue Alliance statistics
   const blueStats = useMemo(() => {
-    const t1Auto = blue1 ? blue1.auto_epa_total : defaultEPA.auto
-    const t1Tele = blue1 ? blue1.tele_epa_total : defaultEPA.tele
-    const t1Total = blue1 ? blue1.epa_total : defaultEPA.total
+    const t1Auto = blue1 ? blue1.auto_epa_total || 0 : 0
+    const t1Tele = blue1 ? blue1.tele_epa_total || 0 : 0
+    const t1Total = blue1 ? blue1.epa_total || 0 : 0
     const t1End = t1Total - t1Auto - t1Tele
 
-    const t2Auto = blue2 ? blue2.auto_epa_total : defaultEPA.auto
-    const t2Tele = blue2 ? blue2.tele_epa_total : defaultEPA.tele
-    const t2Total = blue2 ? blue2.epa_total : defaultEPA.total
+    const t2Auto = blue2 ? blue2.auto_epa_total || 0 : 0
+    const t2Tele = blue2 ? blue2.tele_epa_total || 0 : 0
+    const t2Total = blue2 ? blue2.epa_total || 0 : 0
     const t2End = t2Total - t2Auto - t2Tele
 
     return {
@@ -141,7 +141,7 @@ function Predict() {
       endgame: t1End + t2End,
       total: t1Total + t2Total,
     }
-  }, [blue1, blue2, defaultEPA])
+  }, [blue1, blue2])
 
   // Calculate predicted win rate (based on Nest backend weighted formula and C constant)
   const prediction = useMemo(() => {
@@ -164,8 +164,9 @@ function Predict() {
     }
   }, [redStats, blueStats, cConstant, autoWeight, teleWeight, endWeight])
 
-  // Check if all slots are filled
+  // Check if all slots are filled and if any slot has a team
   const allFilled = !!(red1 && red2 && blue1 && blue2)
+  const hasAnyTeam = !!(red1 || red2 || blue1 || blue2)
 
   // Calculate Predicted Event Standings (Beta) - Simulation based if matches schedule is loaded, otherwise EPA sorted
   const eventTeams = useMemo(() => {
@@ -470,13 +471,6 @@ function Predict() {
 
         {/* Tab 1: Match Predictor */}
         <TabsContent value="match" className="flex flex-col gap-6 outline-none">
-          {!allFilled && (
-            <div className="bg-yellow-500/10 border border-yellow-500/20 text-yellow-600 dark:text-yellow-400 text-xs px-4 py-3 rounded-lg flex items-center gap-2">
-              <ShieldAlert className="w-4 h-4 flex-shrink-0" />
-              <span><b>Notice</b>: Some team slots are empty. The system has automatically used half of the average EPA of all active teams as the default fallback for missing teams.</span>
-            </div>
-          )}
-
           {/* Main Grid Layout */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
             {/* Left Column: Red Alliance */}
@@ -548,26 +542,30 @@ function Predict() {
                       <div className="flex flex-col">
                         <span className="text-xs font-bold text-red-500">Red Win Rate</span>
                         <span className="text-3xl font-extrabold text-red-500 font-mono">
-                          {(prediction.redProb * 100).toFixed(1)}%
+                          {hasAnyTeam ? `${(prediction.redProb * 100).toFixed(1)}%` : '--.-%'}
                         </span>
                       </div>
                       <div className="flex flex-col items-end">
                         <span className="text-xs font-bold text-blue-500">Blue Win Rate</span>
                         <span className="text-3xl font-extrabold text-blue-500 font-mono">
-                          {(prediction.blueProb * 100).toFixed(1)}%
+                          {hasAnyTeam ? `${(prediction.blueProb * 100).toFixed(1)}%` : '--.-%'}
                         </span>
                       </div>
                     </div>
 
                     {/* Progress bar */}
                     <div className="w-full h-4 bg-muted rounded-full overflow-hidden flex shadow-inner">
-                      <div
-                        className="bg-red-500 transition-all duration-500 ease-out"
-                        style={{ width: `${prediction.redProb * 100}%` }}
-                      />
-                      <div
-                        className="bg-blue-500 transition-all duration-500 ease-out flex-1"
-                      />
+                      {hasAnyTeam && (
+                        <>
+                          <div
+                            className="bg-red-500 transition-all duration-500 ease-out"
+                            style={{ width: `${prediction.redProb * 100}%` }}
+                          />
+                          <div
+                            className="bg-blue-500 transition-all duration-500 ease-out flex-1"
+                          />
+                        </>
+                      )}
                     </div>
                   </div>
 
