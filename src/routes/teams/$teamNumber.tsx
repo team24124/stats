@@ -61,7 +61,7 @@ function RouteComponent() {
       <EPAAreaChart team={team} />
     </div>
 
-    <a href='https://frc-events.firstinspires.org/services/API'><i><p className='text-muted-foreground'>Event Data provided by FIRST is updated daily at 00 UTC.</p></i></a>
+    <a href='https://frc-events.firstinspires.org/services/API'><i><p className='text-muted-foreground'>Event Data is updated hourly from Friday to Sunday, and daily at 00:00 UTC on other days.</p></i></a>
 
   </main>
 }

@@ -39,8 +39,8 @@ function NavbarDropdown() {
                 OPR
               </DropdownMenuItem>
               </Link>
-              <Link to="/predict" disabled>
-              <DropdownMenuItem disabled>
+              <Link to="/predict">
+              <DropdownMenuItem className="hover:cursor-pointer">
                 <ChartNoAxesCombined />
                 Predict
               </DropdownMenuItem>

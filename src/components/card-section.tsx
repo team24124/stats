@@ -8,7 +8,7 @@ type Props = {
 
 function CardSection({ numTeams, numEvents }: Props) {
     return (
-        <div className='grid grid-cols-1 grid-rows-2 gap-8 m-4 w-md sm:grid-cols-2 sm:w-xl md:w-3xl md:grid-rows-1'>
+        <div className='grid grid-cols-1 grid-rows-2 gap-8 m-4 w-full max-w-md sm:grid-cols-2 sm:w-xl md:w-3xl md:grid-rows-1'>
             <Card>
                 <CardHeader>
                     <CardDescription>Tracking statistics for...</CardDescription>
