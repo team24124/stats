@@ -126,7 +126,7 @@
 }
 
 main {
-  @apply min-w-md lg:min-w-4xl max-w-4xl mx-auto my-12;
+  @apply w-full max-w-4xl mx-auto px-4 my-6 md:my-12;
 }
 
 p {

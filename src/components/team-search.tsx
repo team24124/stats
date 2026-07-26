@@ -5,6 +5,7 @@ import { Command, CommandEmpty, CommandGroup, CommandItem, CommandList } from ".
 import { Input } from "./ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 import { Skeleton } from "./ui/skeleton";
+import { Search } from "lucide-react";
 
 type Props = {
     onSelected: (inputValue: string) => void;
@@ -12,6 +13,9 @@ type Props = {
     isLoading?: boolean;
     emptyMessage?: string;
     placeholder?: string;
+    className?: string;
+    inputClassName?: string;
+    popoverClassName?: string;
 };
 
 function TeamSearchbar({
@@ -20,6 +24,9 @@ function TeamSearchbar({
     isLoading,
     emptyMessage = "No teams found.",
     placeholder = "Search for team",
+    className,
+    inputClassName,
+    popoverClassName,
 }: Props) {
 
     const [open, setOpen] = useState(false);
@@ -37,11 +44,14 @@ function TeamSearchbar({
     };
 
     return (
-        <div className="h-16 mx-4 w-md md:w-2xl lg:w-4xl">
+        <div className={className ?? "h-16 mx-4 w-full max-w-md md:max-w-2xl lg:max-w-4xl"}>
             <Popover open={open} onOpenChange={setOpen}>
                 <Command shouldFilter={false}>
                     <PopoverTrigger>
-                        <Input value={searchValue} onChange={(e) => onSearchValueChange(e.target.value)} placeholder={placeholder} className="h-16"/>
+                        <div className="relative w-full">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+                            <Input value={searchValue} onChange={(e) => onSearchValueChange(e.target.value)} placeholder={placeholder} className={`${inputClassName ?? "h-16"} pl-10`}/>
+                        </div>
                     </PopoverTrigger>
                     {!open && <CommandList aria-hidden="true" className="hidden" />}
                     <PopoverContent
@@ -55,7 +65,7 @@ function TeamSearchbar({
                                 e.preventDefault();
                             }
                         }}
-                        className="w-md md:w-2xl lg:min-w-4xl p-0" //w-[--radix-popover-trigger-width]
+                        className={popoverClassName ?? "w-[--radix-popover-trigger-width] max-w-[90vw] p-0"}
                     >
                         <CommandList>
                             {isLoading && (

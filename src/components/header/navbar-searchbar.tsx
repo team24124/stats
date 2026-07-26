@@ -5,6 +5,7 @@ import { Command, CommandEmpty, CommandGroup, CommandItem, CommandList } from "@
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Search } from "lucide-react";
 
 type Props = {
     onSelected: (inputValue: string) => void;
@@ -41,7 +42,10 @@ function NavSearchbar({
             <Popover open={open} onOpenChange={setOpen}>
                 <Command shouldFilter={false}>
                     <PopoverTrigger>
-                        <Input value={searchValue} onChange={(e) => onSearchValueChange(e.target.value)} placeholder={placeholder} className="h-12"/>
+                        <div className="relative w-full">
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+                            <Input value={searchValue} onChange={(e) => onSearchValueChange(e.target.value)} placeholder={placeholder} className="h-12 pl-10"/>
+                        </div>
                     </PopoverTrigger>
                     {!open && <CommandList aria-hidden="true" className="hidden" />}
                     <PopoverContent
