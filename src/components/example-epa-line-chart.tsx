@@ -7,6 +7,7 @@ import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts";
 import { Combobox } from "./combobox";
 import { Card, CardContent, CardDescription, CardTitle } from "./ui/card";
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from "./ui/chart";
+import TeamMultiselector, { type Option } from "./team-multiselect";
 
 // List of preset colors to be used first, in order
 let COLOR_LIST = ["red", "blue", "green", "purple", "yellow", "orange", "magenta", "maroon", "olive", "brown"];
@@ -85,6 +86,14 @@ function ExampleEPALineChart({ passedOptions = [], className = "" }: { passedOpt
             </CardDescription>
             <CardTitle>
                 <div className="flex gap-4 items-center">
+                    <TeamMultiselector
+                        value={selected}
+                        onChange={setSelected}
+                        delay={10}
+                        defaultOptions={TeamOptions}
+                        emptyIndicator={<p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">no results found.</p>}
+                        className="mb-2 hidden"
+                    />
                 </div>
                 <Combobox values={ModeOptions} selected={selectedMode} setSelected={setSelectedMode} allowEmpty={false} showSearchbar={false} />
             </CardTitle>

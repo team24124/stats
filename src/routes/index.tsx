@@ -7,6 +7,8 @@ import CardSection from '@/components/card-section'
 import { useSuspenseQuery } from '@tanstack/react-query'
 import ExampleEPALineChart from '@/components/example-epa-line-chart'
 import EPAInfo from '@/components/epa-info'
+import { type Option } from "@/components/team-multiselect";
+import type { Team } from '@/types/Team';
 
 export const Route = createFileRoute('/')({
     loader: async ({ context: { queryClient } }) => {
